@@ -12,9 +12,9 @@ class AbstractExecutor:
     def __init__(self, program_module):
         self.program_module = program_module
         self.execution_data = {}
-        print(f"Program module: {program_module.__name__}")
+        #print(f"Program module: {program_module.__name__}")
         self._lines, _ = inspect.getsourcelines(program_module)
-        print(f"Lines: {self._lines}")
+        #print(f"Lines: {self._lines}")
     
     def _execute_input(self, input=None):
         exceptions = 0
