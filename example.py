@@ -7,7 +7,7 @@ from poly_llm.generators.llm_test_generator import LLMTestGenerator
 from transformers import AutoTokenizer, T5ForConditionalGeneration
 import json
 from coverage import Coverage
-
+import importlib
 if __name__ == '__main__':
     # Create an instance of the AbstractExecutor class
     #executor = AbstractExecutor(parse_nested_parens)
@@ -19,14 +19,27 @@ if __name__ == '__main__':
     model = T5ForConditionalGeneration.from_pretrained(model_name) 
 
     llm_generator = LLMTestGenerator(model, tokenizer, file_name_check)
-    prompt = prompt_generator.generate_prompt(few_shot_examples=['''def test_file_name_check(): \n # pragma: no cover
-    assert file_name_check("example.txt") == 'Yes' # pragma: no cover \n
-    assert file_name_check("1example.dll") == 'No' # pragma: no cover\n'''])
-    print(prompt)
-    test = llm_generator.create_test_function(prompt)
+    prompt = prompt_generator.generate_prompt(few_shot_examples=['''def test_file_name_check(): \n 
+    assert file_name_check("example.txt") == 'Yes'  \n
+    assert file_name_check("1example.dll") == 'No' \n'''])
 
-    print(test)
-    # Define the inputs to be executed
+    print(prompt)
+    test, test_name = llm_generator.create_test_function(prompt)
+    filename = "test_generated.py"
+
+    llm_generator.write_test_to_file(test, filename=filename)
+
+    module_name = filename.split(".")[0]
+    function_name = test_name
+
+    # Dynamically import the module
+    module = importlib.import_module(module_name)
+    function = getattr(module, function_name)
+
+    executor2 = AbstractExecutor(function)
+
+    coverage_date = executor2._execute_input(file_name_check)
+    print(coverage_date)
 
     '''
 

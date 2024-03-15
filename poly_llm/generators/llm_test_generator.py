@@ -43,15 +43,16 @@ class LLMTestGenerator(AbstractGenerator):
 
         # Create the test function with the extracted or placeholder assertions
         test_function_code = (
-            f"def test_{function_name}():\n    {formatted_assertions}\n"
+            f"def test_{function_name}({function_name}):\n    {formatted_assertions}\n"
         )
 
-        return test_function_code
+        return test_function_code, f"test_{function_name}"
 
     def write_test_to_file(self, test_function_code, filename="test_generated.py"):
         with open(filename, "a") as file:
             file.write(test_function_code)
         print(f"Test function written to {filename}")
+        
 
     @property
     def name(self) -> str:

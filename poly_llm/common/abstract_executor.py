@@ -12,15 +12,22 @@ class AbstractExecutor:
     def __init__(self, program_module):
         self.program_module = program_module
         self.execution_data = {}
+        print(f"Program module: {program_module.__name__}")
+        self._lines, _ = inspect.getsourcelines(program_module)
+        print(f"Lines: {self._lines}")
     
-    def _execute_input(self, input):
+    def _execute_input(self, input=None):
         exceptions = 0
+        coverage_data = {}
         try:
             cov = Coverage(branch=True)
             cov.start()
             #.. call your code ..
             start_time = time.time()
-            self.program_module(input)
+            if input is None:
+                self.program_module()
+            else:
+                self.program_module(input)
             end_time = time.time()
             cov.stop()
             cov.json_report()

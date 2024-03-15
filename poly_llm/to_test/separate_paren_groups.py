@@ -1,6 +1,5 @@
 from typing import List
 
-
 def separate_paren_groups(paren_string: str) -> List[str]:
     """ Input to this function is a string containing multiple groups of nested parentheses. Your goal is to
     separate those group into separate strings and return the list of those.
@@ -27,21 +26,14 @@ def separate_paren_groups(paren_string: str) -> List[str]:
 
     return result
 
-
-METADATA = {
-    'author': 'jt',
-    'dataset': 'test'
-}
-
-
-def check(candidate):
-    assert candidate('(()()) ((())) () ((())()())') == [
+def test_separate_paren_groups():
+    assert separate_paren_groups('(()()) ((())) () ((())()())') == [
         '(()())', '((()))', '()', '((())()())'
     ]
-    assert candidate('() (()) ((())) (((())))') == [
+    assert separate_paren_groups('() (()) ((())) (((())))') == [
         '()', '(())', '((()))', '(((())))'
     ]
-    assert candidate('(()(())((())))') == [
+    assert separate_paren_groups('(()(())((())))') == [
         '(()(())((())))'
     ]
-    assert candidate('( ) (( )) (( )( ))') == ['()', '(())', '(()())']
+    assert separate_paren_groups('( ) (( )) (( )( ))') == ['()', '(())', '(()())']
