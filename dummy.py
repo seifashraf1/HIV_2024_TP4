@@ -1,12 +1,15 @@
-def test_closest_integer(closest_integer):
-    assert closest_integer("10") == 10
-    assert closest_integer("15.3") == 15
-    assert closest_integer("14.5") == 15
-    assert closest_integer("-14.5") == -15
+def divide_list(lst):
+    n = len(lst)
+    size = n // 3  # Calculate the size of each part
+    parts = [lst[i * size:(i + 1) * size] for i in range(3)]  # Divide the list into three parts
+    return parts
 
-#check if the last character is a  ) and if not add ') == 'NO'
-if test[-1] != "'":
-    #remove any trailing spaces or '\n'
-    test = test.rstrip()
-    test += "') == 'NO'"
-print(test)
+# Example list
+my_list = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
+
+# Divide the list into three parts
+divided_list = divide_list(my_list)
+
+# Print the divided parts
+for i, part in enumerate(divided_list, 1):
+    print(f"Part {i}: {part}")

@@ -38,8 +38,7 @@ def closest_integer(value):
     return res
 
 def test_closest_integer():# pragma: no cover
-    #assert closest_integer("10") == 10, "Test 1"# pragma: no cover
-    #assert closest_integer("14.5") == 15, "Test 2"# pragma: no cover
-    assert closest_integer("-14.5") == -15, "Test 3"# pragma: no cover
-    assert closest_integer("15.3") == 15, "Test 4"# pragma: no cover
-    #sassert closest_integer("1.23456789") == 1, "Test 5"# pragma: no cover
+    assert closest_integer("10") == 10, "Test 1"# pragma: no cover
+    assert closest_integer("14.5") == 15, "Test 2"# pragma: no cover
+
+

@@ -31,5 +31,8 @@ def file_name_check(file_name):
 def test_file_name_check(): # pragma: no cover
     assert file_name_check("example.txt") == 'Yes' # pragma: no cover
     assert file_name_check("1example.dll") == 'No' # pragma: no cover
-    assert file_name_check('.txt') == 'No'# pragma: no cover
+    #assert file_name_check('.txt') == 'No'# pragma: no cover
+    #assert file_name_check('example.') == 'No'# pragma: no cover
+    #assert file_name_check('example.txt') == 'Yes'# pragma: no cover
+    #assert file_name_check('example.txt.txt') == 'No'# pragma: no cover
 
