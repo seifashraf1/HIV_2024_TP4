@@ -13,122 +13,44 @@ import importlib
 import os
 from tqdm import tqdm
 
-
-#device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-device = torch.device("cpu")
-model_name = "Salesforce/codet5-large-ntp-py"
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+model_name = "facebook/blenderbot-1B-distill"
 tokenizer = AutoTokenizer.from_pretrained(model_name) #tokenizer#AutoTokenizer.from_pretrained("codellama/CodeLlama-7b-Python-hf")#
 model = T5ForConditionalGeneration.from_pretrained(model_name).to(device)
 
-
-def divide_list(lst):
-    n = len(lst)
-    size = n // 3  # Calculate the size of each part
-    parts = [lst[i * size:(i + 1) * size] for i in range(3)]  # Divide the list into three parts
-    return parts
-
 #each two examples of each PUT examples list will be used for one prompt
-closest_integer_examples =[
-    '''
+closest_integer_examples = '''
         assert closest_integer("10") == 10, "Test 1
         assert closest_integer("14.5") == 15, "Test 2"
-    ''',
     '''
-        assert closest_integer("-14.5") == -15, "Test 3"
-        assert closest_integer("15.3") == 15, "Test 4"
-    ''',
-    '''
-        assert closest_integer("15.5") == 16, "Test 5"
-        assrt closest_integer("1.326") == 1, "Test 6"
-    '''
-]
 
-file_name_check_examples = [
-    '''
-        assert file_name_check("example.txt") == 'Yes'
-        assert file_name_check("example.dll") == 'Yes'
-    ''',
-    '''
-        assert file_name_check('.txt') == 'No'
-        assert file_name_check('example.') == 'No'
-    ''',
-    '''
+file_name_check_examples = '''
         assert file_name_check("example.dll") == 'Yes'
         assert file_name_check("example") == 'No'
     '''
-]
 
-find_closest_elements_examples = [
-    '''
+find_closest_elements_examples = '''
         assert find_closest_elements([1.0, 2.0, 3.9, 4.0, 5.0, 2.2]) == (3.9, 4.0)
-    ''',
     '''
-        assert find_closest_elements([1.0, 2.0, 5.9, 4.0, 5.0]) == (5.0, 5.9)
-    ''',
-    '''
-        assert find_closest_elements([1.0, 2.0, 3.0, 4.0, 5.0, 2.2]) == (2.0, 2.2)
-        assert find_closest_elements([1.0, 2.0, 3.0, 4.0, 5.0, 2.1]) == (2.0, 2.1)
-    '''
-]
 
-numerical_letter_grade_examples = [
-    '''
-        assert numerical_letter_grade([4.0]) == ['A']
-    ''',
-    '''
-        assert numerical_letter_grade([4.0, 3, 1.7, 2, 3.5]) == ['A+', 'B', 'C-', 'C', 'A-']
-    ''',
-    '''
+numerical_letter_grade_examples = '''
         assert numerical_letter_grade([1.2]) == ['D+']
         assert numerical_letter_grade([4.0]) == ['A+']
     '''
-]
 
-separate_paren_groups_examples = [
-    '''
-        assert separate_paren_groups('(()()) ((())) () ((())()())') == ['(()())', '((()))', '()', '((())()())']
-        assert separate_paren_groups('() (()) ((())) (((())))') == ['()', '(())', '((()))', '(((())))']
-    ''',
-    '''
-        assert separate_paren_groups('((()()))') == ['((()))']
-    ''',
-    '''
+separate_paren_groups_examples = '''
         assert separate_paren_groups('()()((()))()') == ['()', '()', '((()))', '()']
         assert separate_paren_groups('()()((()))()((()()))') == ['()', '()', '((()))', '()', '((()()))']
     '''
-]
-
-closest_integer_parts = divide_list(closest_integer_examples)
-file_name_check_parts = divide_list(file_name_check_examples)
-find_closest_elements_parts = divide_list(find_closest_elements_examples)
-numerical_letter_grade_parts = divide_list(numerical_letter_grade_examples)
-separate_paren_groups_parts = divide_list(separate_paren_groups_examples)
 
 PUTS = [closest_integer, file_name_check, find_closest_elements, numerical_letter_grade, separate_paren_groups]
-parts = [closest_integer_parts, file_name_check_parts, find_closest_elements_parts, numerical_letter_grade_parts, separate_paren_groups_parts]
-# PUTS = [PUTS[4]]
-# parts = [parts[4]]
+parts = [closest_integer_examples, file_name_check_examples, find_closest_elements_examples, numerical_letter_grade_examples, separate_paren_groups_examples]
 
 for i in range(len(PUTS)):
-    #delete any file that was created by the previous PUT
-    # try:
-    #     filename = f"{PUT.__name__}_test_generated.py"
-    #     os.remove(filename)
-    # except:
-    #     pass
 
     executor = AbstractExecutor(PUTS[i])
     prompt_generator = PromptGenerator(PUTS[i])
     llm_generator = LLMTestGenerator(model, tokenizer, PUTS[i])
-
-    # example_tests = []
-    # with open(f"poly_llm/to_test/{PUT.__name__}.py", "r") as f:
-    #     lines = f.readlines()
-    #     for line in lines:
-    #         if "def test_" in line or "assert" in line:
-    #             example_tests.append(line)
-    # #turn the list into a string
-    # example_tests = "".join(example_tests)
 
     prompt = prompt_generator.generate_prompt(few_shot_examples=parts[i][2])
 
